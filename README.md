@@ -46,8 +46,5 @@ pip install -r requirements.txt
 ## Contributing 🤝
 Contributions are welcome! Please open issues or submit pull requests for improvements.
 
-## License 📜
-Specify your license here (e.g., MIT).
-
 ## Contact ✉️
 For questions, reach out to the repo owner: Suyashtiwari-7
