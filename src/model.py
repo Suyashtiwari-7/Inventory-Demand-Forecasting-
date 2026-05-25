@@ -25,11 +25,11 @@ def save_model_artifacts(model, mappings, metrics=None, save_dir='models'):
     """
     os.makedirs(save_dir, exist_ok=True)
     
-    # Save mapping dict
+    # Save mapping dict (pickle)
     with open(os.path.join(save_dir, 'mappings.pkl'), 'wb') as f:
         pickle.dump(mappings, f)
         
-    # Save model
+    # Save model (pickle)
     with open(os.path.join(save_dir, 'lgbm_model.pkl'), 'wb') as f:
         pickle.dump(model, f)
         
@@ -41,8 +41,26 @@ def save_model_artifacts(model, mappings, metrics=None, save_dir='models'):
         }
         with open(os.path.join(save_dir, 'metrics.json'), 'w') as f:
             json.dump(metrics_serializable, f, indent=4)
+            
+    # Save LightGBM native text model format (for Go leaves)
+    model.booster_.save_model(os.path.join(save_dir, 'lgbm_model.txt'))
+    
+    # Save JSON mappings (for Go parsing)
+    go_mappings = {
+        'global_mean': float(mappings['global_mean']),
+        'store_categories': [int(x) for x in mappings['store_categories']],
+        'sku_categories': [int(x) for x in mappings['sku_categories']],
+        'store_sku_map': {f"{int(row['store_id'])}_{int(row['sku_id'])}": float(row['store_sku_mean_sales']) 
+                          for _, row in mappings['store_sku_map'].iterrows()},
+        'store_map': {str(int(row['store_id'])): float(row['store_mean_sales']) 
+                      for _, row in mappings['store_map'].iterrows()},
+        'sku_map': {str(int(row['sku_id'])): float(row['sku_mean_sales']) 
+                    for _, row in mappings['sku_map'].iterrows()}
+    }
+    with open(os.path.join(save_dir, 'mappings.json'), 'w') as f:
+        json.dump(go_mappings, f, indent=4)
         
-    print(f"Artifacts successfully saved to {save_dir}/")
+    print(f"Artifacts successfully saved to {save_dir}/ (including Go models/mappings)")
 
 def load_model_artifacts(save_dir='models'):
     """
