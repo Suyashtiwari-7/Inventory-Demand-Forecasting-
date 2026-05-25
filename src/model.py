@@ -12,10 +12,10 @@ import json
 # Default optimized hyperparameters found during research
 DEFAULT_PARAMS = {
     'subsample': 0.8,
-    'num_leaves': 128,
-    'n_estimators': 800,
-    'learning_rate': 0.1,
-    'colsample_bytree': 0.9,
+    'num_leaves': 150,
+    'n_estimators': 3000,
+    'learning_rate': 0.015,
+    'colsample_bytree': 0.8,
     'random_state': 42
 }
 

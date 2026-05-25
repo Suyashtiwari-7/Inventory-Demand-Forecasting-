@@ -65,7 +65,8 @@ The model is trained on **150,150 weekly transaction records** consisting of:
 | :--- | :---: | :---: | :---: |
 | **Baseline Model** (Original notebook code) | `84.16%` | `16.99` | Baseline |
 | **Optimized Model** (Native categories + Feature Engineering) | `87.79%` | `14.92` | -12.2% |
-| **Optimized & Tuned Model** (OOF CV Target Encoding + Lags) | **`89.46%`** | **`13.85`** | **-18.5%** |
+| **Optimized & Tuned Model** (OOF CV Target Encoding + Lags) | `89.46%` | `13.85` | -18.5% |
+| **Final Hyperparameter Tuned Model** (Low LR + Deep Trees) | **`89.70%`** | **`13.70`** | **-19.4%** |
 
 ---
 
