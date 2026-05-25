@@ -1,0 +1,99 @@
+# Inventory Demand Forecasting & Price Optimizer 📦📈
+
+A production-grade Machine Learning system that forecasts weekly product demand and optimizes promotional pricing to maximize retail revenue. Built using **Python**, **LightGBM**, and **Streamlit**.
+
+---
+
+## 📊 Project Overview
+This project solves a classic retail supply chain challenge: predicting product demand to optimize inventory levels and promotional pricing. By accurately forecasting weekly demand (`units_sold`) for any combination of store and product SKU, the system helps minimize stockouts and reduce inventory holding costs.
+
+---
+
+## 🗂️ Dataset Specifications
+The model is trained on **150,150 weekly transaction records** consisting of:
+* **76 Active Stores** (`store_id`)
+* **28 Unique Products** (`sku_id`)
+* **Price & Promotion Features:**
+  * `base_price`: The standard retail price.
+  * `total_price`: The actual selling price (including discounts).
+  * `is_featured_sku`: Binary flag indicating if the product was featured in the catalog.
+  * `is_display_sku`: Binary flag indicating if the product had in-store stand display.
+* **Target Variable:** `units_sold` (weekly demand volume).
+
+---
+
+## ⚙️ Technical Implementation & Pipelines
+
+### 1. Data Preprocessing & Custom Imputation
+* Imputed a single missing value in the `total_price` column by copying the corresponding `base_price` for that record (representing no discount), rather than using a continuous statistical mean.
+* Filtered out extreme outliers (above the 99th percentile of `units_sold`) to prevent the model from fitting to supply-chain anomalies.
+
+### 2. Feature Engineering
+* **Promotional Features:**
+  * `price_difference`: The absolute discount amount (`base_price - total_price`).
+  * `discount_ratio`: The percentage discount offered (`price_difference / base_price`).
+  * `is_discounted`: Boolean flag indicating if a discount was active (`total_price < base_price`).
+* **Temporal Features:** Extracted `day`, `month`, `year`, `week_of_year`, and `day_of_year` from the `week` date.
+
+### 3. Native Categorical Variable Support
+* Instead of sparse one-hot encoding which increases dataset dimensionality, `store_id` and `sku_id` are cast to Pandas `category` type. This allows LightGBM to perform optimal multi-way categorical splits natively.
+* Mappings are stored to align the categories of any incoming validation or single-row simulation data at inference time.
+
+### 4. Out-of-Fold (OOF) Target Encoding
+* Computed the average sales of `units_sold` per `store_sku`, `store`, and `sku` combinations.
+* Implemented a **5-Split K-Fold Out-of-Fold (OOF) encoder** during training to prevent target leakage, and exported the global mappings for test set inference.
+
+### 5. Hyperparameter Tuning
+* Optimized using a cross-validated Randomized Search to select the best parameters:
+  * `n_estimators`: `800`
+  * `learning_rate`: `0.1`
+  * `num_leaves`: `128`
+  * `subsample`: `0.8`
+  * `colsample_bytree`: `0.9`
+
+---
+
+## 📈 Model Performance Metrics
+
+| Model Configuration | R² Score | RMSE | Error Reduction |
+| :--- | :---: | :---: | :---: |
+| **Baseline Model** (Original notebook code) | `84.16%` | `16.99` | Baseline |
+| **Optimized Model** (Native categories + Feature Engineering) | `87.79%` | `14.92` | -12.2% |
+| **Optimized & Tuned Model** (OOF CV Target Encoding) | **`89.48%`** | **`13.84`** | **-18.5%** |
+
+---
+
+## 🖥️ Streamlit Web Application (`app.py`)
+A custom dark-themed interactive dashboard designed for decision support:
+1. **Analytics Dashboard:** Visualizes top-selling products, top stores, and price-to-demand scatter plots.
+2. **Forecast Explorer:** Plotly line charts displaying historical sales vs. predictions on the test set for any Store-SKU combination.
+3. **Price & Revenue Optimizer:** A live simulator with a price slider to estimate sales volume, with a revenue curve showing the **Optimal Pricing Point** (maximizing Price × Predicted Demand).
+4. **Model Retrainer:** Trigger retraining directly from the UI with real-time progress indicators.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Installation
+Clone the repository and install dependencies:
+```bash
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+
+# Install packages
+pip install -r requirements.txt
+```
+
+### 2. Run the Dashboard
+Start the Streamlit application:
+```bash
+streamlit run app.py
+```
+Open **`http://localhost:8501`** in your browser.
+* **Credentials:** Log in using username `admin` and password `password`, or click **Guest Access** to log in instantly.
+
+### 3. Modular Code Structure
+* **`src/features.py`**: Preprocessing and target encoding functions.
+* **`src/model.py`**: Model training, saving, loading, and prediction functions.
+* **`app.py`**: Streamlit dashboard.

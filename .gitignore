@@ -1,0 +1,26 @@
+# Virtual Environment
+venv/
+.venv/
+Env/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Temporary / Scratch Files
+scratch/
+test_*.py
+run_*.py
+eda.py
+read_notebooks.py
+fix_*.py
+parse_*.py
+inspect_*.py
+summarize_*.py
+print_*.py
