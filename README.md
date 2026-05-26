@@ -117,11 +117,22 @@ Response:
 ---
 
 ## 🖥️ Streamlit Web Application (`app.py`)
-A custom dark-themed interactive dashboard designed for decision support:
-1. **Analytics Dashboard:** Visualizes top-selling products, top stores, and price-to-demand scatter plots.
-2. **Forecast Explorer:** Interactive Plotly charts displaying historical sales vs. predictions on the test set for any Store-SKU combination.
-3. **Price & Revenue Optimizer:** A live simulator with a price slider to estimate sales volume, with a revenue curve showing the **Optimal Pricing Point** (maximizing Price × Predicted Demand).
-4. **Model Retrainer:** Trigger retraining directly from the UI with real-time progress indicators.
+A custom dark-themed interactive dashboard designed for decision support.
+
+### 📊 1. Executive Insights & Analytics
+Visualizes overall sales volume, top-selling SKUs/stores, and price-to-demand scatter plots.
+![Dashboard Analytics](assets/dashboard_analytics.png)
+
+### 📈 2. Demand Forecast Explorer
+Plotly line charts plotting historical sales vs. predictions for any Store-SKU combination.
+![Forecast Explorer](assets/forecast_explorer.png)
+
+### ⚡ 3. Price & Revenue Simulator
+Adjust the selling price to dynamically forecast demand. Plotly revenue curves highlight the **Optimal Pricing Point** (maximizing Price × Predicted Demand).
+![Price Optimizer](assets/price_optimizer.png)
+
+### ⚙️ 4. Interactive Model Retrainer
+Trigger retraining directly from the UI with real-time progress indicators.
 
 ---
 
